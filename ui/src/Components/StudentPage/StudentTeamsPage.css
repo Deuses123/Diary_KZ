@@ -1,0 +1,35 @@
+.team-container {
+    display: flex;
+    height: 100%;
+    overflow: hidden;
+}
+
+.team-list {
+    width: 200px;
+    overflow: auto;
+    border-right: 1px solid #ccc;
+    padding-right: 10px;
+}
+
+.team-list .team-item {
+    cursor: pointer;
+    padding: 10px;
+    transition: background-color 0.2s ease;
+}
+
+.team-list .team-item:hover {
+    background-color: #eee;
+}
+
+.team-list .team-item.selected {
+    background-color: #ddd;
+}
+
+.team-info {
+    width: 200px;
+    padding: 10px;
+}
+
+.team-info h2 {
+    margin-top: 0;
+}

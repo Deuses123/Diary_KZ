@@ -1,0 +1,10 @@
+.edit-button {
+    position: absolute;
+    margin-left: 600px;
+    color: #c77f3b;
+    cursor: pointer;
+
+}
+.edit-button:hover{
+    opacity: 50%;
+}
