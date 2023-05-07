@@ -1,0 +1,8 @@
+id,firstname,lastname,email,password,birth_date,gender,address,phone_number,role
+1,Sanzhar,Kalibekov,s.kalibekov54@gmail.com,$2y$10$HRow2Q.9fyqo1FI74LLhdOgIKdvzE/GZFargEa27vzGkqR4gh9BKi,2000-01-01,M,123 Main St,+12345678901,TEACHER
+2,Elkhan,Isaev,isaev@example.com,$2y$10$HRow2Q.9fyqo1FI74LLhdOgIKdvzE/GZFargEa27vzGkqR4gh9BKi,2003-02-08,M,456 Broad St,+77007656765,STUDENT
+3,Madina,Zhakupova,zhakupova@example.com,$2y$10$HRow2Q.9fyqo1FI74LLhdOgIKdvzE/GZFargEa27vzGkqR4gh9BKi,2003-02-24,W,Almaty,+77776543210,STUDENT
+4,Iliyas,Ukenov,ukenov@example.com,$2y$10$HRow2Q.9fyqo1FI74LLhdOgIKdvzE/GZFargEa27vzGkqR4gh9BKi,2003-11-20,M,Almaty,+77076545789,STUDENT
+5,Elmira,Kuanyshbayeva,elmira@example.com,$2y$10$HRow2Q.9fyqo1FI74LLhdOgIKdvzE/GZFargEa27vzGkqR4gh9BKi,2002-02-02,W,Almaty,+77008765789,STUDENT
+6,Aimurat,Idrisov,idrisov@example.com,$2y$10$HRow2Q.9fyqo1FI74LLhdOgIKdvzE/GZFargEa27vzGkqR4gh9BKi,2002-09-09,M,Almaty,+77007678765,STUDENT
+7,Alikhan,Sabitov,sabitov@example.com,$2y$10$HRow2Q.9fyqo1FI74LLhdOgIKdvzE/GZFargEa27vzGkqR4gh9BKi,2003-07-30,M,Almaty,+77087657687,STUDENT

@@ -1,0 +1,317 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-user-table
+      author: Sanzhar Kalibekov
+      changes:
+        - preConditions:
+            onFail: MARK_RAN
+            not:
+              tableExists:
+                tableName: _user
+        - createTable:
+            tableName: _user
+            columns:
+              - column:
+                  name: id
+                  type: SERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: firstname
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: lastname
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: email
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: password
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: birth_date
+                  type: DATE
+                  constraints:
+                    nullable: true
+              - column:
+                  name: gender
+                  type: CHAR(1)
+                  constraints:
+                    checkConstraint: "gender IN ('M', 'W')"
+                    nullable: true
+              - column:
+                  name: address
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: phone_number
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: role
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+        - addUniqueConstraint:
+            constraintName: email_unique
+            tableName: _user
+            columnNames: email
+        - loadData:
+            file: data/user.csv
+            tableName: _user
+
+  - changeSet:
+      id: create-token-table
+      author: Sanzhar Kalibekov
+      changes:
+        - preConditions:
+            onFail: MARK_RAN
+            not:
+              tableExists:
+                tableName: token
+        - createTable:
+            tableName: token
+            columns:
+              - column:
+                  name: id
+                  type: SERIAL
+                  autoIncrement: true
+
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: token
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: token_type
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: revoked
+                  type: BOOLEAN
+                  constraints:
+                    nullable: false
+              - column:
+                  name: expired
+                  type: BOOLEAN
+                  constraints:
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: INTEGER
+                  constraints:
+                    foreignKeyName: fk_token_user
+
+        - addForeignKeyConstraint:
+            baseTableName: token
+            baseColumnNames: user_id
+            constraintName: fk_token_user
+            referencedTableName: _user
+            referencedColumnNames: id
+
+
+  - changeSet:
+      id: createTableTeam
+      author: Sanzhar Kalibekov
+      changes:
+        - preConditions:
+            onFail: MARK_RAN
+            not:
+              tableExists:
+                tableName: team
+        - createTable:
+            tableName: team
+            columns:
+              - column:
+                  name: id
+                  type: INT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: VARCHAR(255)
+              - column:
+                  name: owner_id
+                  type: INT
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: team
+            baseColumnNames: owner_id
+            constraintName: fk_team_user
+            referencedTableName: _user
+            referencedColumnNames: id
+        - loadData:
+            file: data/team.csv
+            tableName: team
+
+  - changeSet:
+      id: addStudentTeamTable
+      author: Sanzhar Kalibekov
+      changes:
+        - createTable:
+            tableName: student_team
+            columns:
+              - column:
+                  name: student_id
+                  type: INT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: team_id
+                  type: INT
+                  constraints:
+                    nullable: false
+            primaryKey:
+              columnNames: [ student_id, team_id ]
+        - addForeignKeyConstraint:
+            baseTableName: student_team
+            baseColumnNames: student_id
+            constraintName: fk_student_team_student
+            referencedTableName: _user
+            referencedColumnNames: id
+        - addForeignKeyConstraint:
+            baseTableName: student_team
+            baseColumnNames: team_id
+            constraintName: fk_student_team_team
+            referencedTableName: team
+            referencedColumnNames: id
+        - loadData:
+            file: data/student_team.csv
+            tableName: student_team
+
+  - changeSet:
+      id: addTasksTable
+      author: Sanzhar Kalibekov
+      changes:
+        - preConditions:
+            onFail: MARK_RAN
+            not:
+              tableExists:
+                tableName: tasks
+        - createTable:
+            tableName: tasks
+            columns:
+              - column:
+                  name: task_id
+                  type: INT
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: TEXT
+              - column:
+                  name: team_id
+                  type: INT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: files
+                  type: TEXT[]
+
+        - addForeignKeyConstraint:
+            baseTableName: tasks
+            baseColumnNames: team_id
+            constraintName: team_id
+            referencedTableName: team
+            referencedColumnNames: id
+        - addUniqueConstraint:
+            constraintName: unique_name
+            tableName: tasks
+            columnNames: name
+        - sql:
+            sql: "INSERT INTO tasks (name, description, team_id, files) VALUES ('Двойные', 'Интегралы', 1, '{task-1.jpg}'), ('Дискриминант', 'Решить все квадратные уравнения', 1, '{kvadratnoe_uravnenie.pdf}'), ('Равнобедренный треугольник', 'Решить', 2, '{geometry.jpg}'), ('Слова', 'Задача 13', 4, '{eng.jpg}');"
+
+
+  - changeSet:
+      id: create_task_assignments_table
+      author: Sanzhar Kalibekov
+
+      changes:
+        - preConditions:
+            onFail: MARK_RAN
+            not:
+              tableExists:
+                tableName: task_assignments
+        - createTable:
+            tableName: task_assignments
+            columns:
+              - column:
+                  name: user_id
+                  type: int
+              - column:
+                  name: team_id
+                  type: int
+              - column:
+                  name: task_id
+                  type: int
+              - column:
+                  name: score
+                  type: int
+              - column:
+                  name: answer
+                  type: text
+              - column:
+                  name: status
+                  type: BOOLEAN
+                  defaultValueBoolean: true
+
+              - column:
+                  name: files
+                  type: TEXT[]
+
+            primaryKey:
+              columnNames: user_id, team_id, task_id
+        - addForeignKeyConstraint:
+            baseTableName: task_assignments
+            baseColumnNames: user_id
+            constraintName: fk_user_id
+            referencedTableName: _user
+            referencedColumnNames: id
+
+        - addForeignKeyConstraint:
+            baseTableName: task_assignments
+            baseColumnNames: team_id
+            constraintName: fk_team_id
+            referencedTableName: team
+            referencedColumnNames: id
+
+        - addForeignKeyConstraint:
+            baseTableName: task_assignments
+            baseColumnNames: task_id
+            constraintName: fk_task_id
+            referencedTableName: tasks
+            referencedColumnNames: task_id
+
+        - sql:
+            sql: "INSERT INTO task_assignments (user_id, team_id, task_id, score, answer, status, files) VALUES (2, 1, 1, 0, 'ответы', false, '{task-1.jpg}'), (4, 1, 1, 0, '', false, '{}'), (5, 1, 1, 0, '', false, '{}'), (6, 1, 1, 0, '', false, '{}'), (2, 1, 2, 0, 'ответы', false, '{task-1.jpg}'), (4, 1, 2, 0, '', false, '{}'), (5, 1, 2, 0, '', false, '{}'), (6, 1, 2, 0, '', false, '{}'), (2, 2, 3, 0, 'ответы', false, '{task-1.jpg}'), (3, 2, 3, 0, '', false, '{}'), (4, 2, 3, 0, '', false, '{}'), (5, 2, 3, 0, '', false, '{}'), (7, 4, 4, 0, 'ответы', false, '{eng.jpg}'), (6, 4, 4, 0, '', false, '{}'), (1, 4, 4, 0, '', false, '{}'), (2, 4, 4, 0, '', false, '{}')"
+
